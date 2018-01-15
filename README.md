@@ -26,7 +26,8 @@ and save it in the source directory.
 http://download.tensorflow.org/models/object_detection/
 github page (https://github.com/tensorflow/models/tree/master/research/object_detection)
 
-## The network creates: a depth image     yourImage_depth.jpg
+## The network creates: 
+					 a depth image     yourImage_depth.jpg
 					 a box image       yourImage_box.jpg
 					 a combined image  yourImage_combined.jpg
 					 

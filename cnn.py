@@ -224,8 +224,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 #Pathes
-model_data_path = "C:/deepLearning3/NYU_FCRN.ckpt"
-IMAGE_PATH = 'dataset/single_prediction/image_2.jpg' 
+model_data_path = "C:/ObjectLocalizationAndDepthEstimation/NYU_FCRN.ckpt"
+IMAGE_PATH = 'dataset/single_prediction/image_1.jpg' 
 IMAGE_PATH_withoutEnd = IMAGE_PATH
 IMAGE_PATH_withoutEnd = IMAGE_PATH_withoutEnd[:-4]
 
@@ -324,7 +324,7 @@ DOWNLOAD_BASE = 'http://download.tensorflow.org/models/object_detection/'
 PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph.pb'
 
 # List of the strings that is used to add correct label for each box.
-PATH_TO_LABELS = ("C:\deepLearning3\object_recognition_detection\data\mscoco_label_map.pbtxt")
+PATH_TO_LABELS = ("C:\ObjectLocalizationAndDepthEstimation\object_recognition_detection\data\mscoco_label_map.pbtxt")
 
 NUM_CLASSES = 90
 
@@ -376,7 +376,7 @@ def load_image_into_numpy_array(image):
 # image2.jpg
 # If you want to test the code with your images, just add path to the images to the TEST_IMAGE_PATHS.
 PATH_TO_TEST_IMAGES_DIR = 'test_images'
-TEST_IMAGE_PATHS = [ os.path.join('C:\deepLearning3\dataset\single_prediction', 'image_{}.jpg'.format(i)) for i in range(1, 4) ]
+TEST_IMAGE_PATHS = [ os.path.join('\dataset\single_prediction', 'image_{}.jpg'.format(i)) for i in range(1, 4) ]
 # Size, in inches, of the output images.
 IMAGE_SIZE = (12, 8)
 
@@ -445,7 +445,7 @@ from keras.preprocessing import image
 from imagenet_utils import preprocess_input, decode_predictions
 resnet = detectKeras.applications.resnet50.ResNet50(include_top=True, weights='imagenet', input_tensor=None, input_shape=None, pooling=None, classes=1000)
 
-IMAGE_PATH = 'dataset/single_prediction/image_2.jpg' 
+IMAGE_PATH = 'dataset/single_prediction/image_1.jpg' 
 IMAGE_PATH_withoutEnd = IMAGE_PATH
 IMAGE_PATH_withoutEnd = IMAGE_PATH_withoutEnd[:-4]
 
