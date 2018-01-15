@@ -1,7 +1,12 @@
 # DeepLearning Object Detection and Depth Estimation
 
-largefiles over 100mb are not suported by github
-this repository needs the NYU_FCRN pretrained model for depth estimation you can download it here:
+## Introduction
+
+### Quick Start:
+
+
+
+## this repository needs the NYU_FCRN pretrained model for depth estimation you can download it here:
 http://campar.in.tum.de/files/rupprecht/depthpred/NYU_ResNet-UpProj.npy 
 (from this github page: https://github.com/iro-cp/FCRN-DepthPrediction)
 and save it in the source directory.
@@ -18,4 +23,10 @@ The network creates: a depth image     yourImage_depth.jpg
 					 a box image       yourImage_box.jpg
 					 a combined image  yourImage_combined.jpg
 					 
-					 in the folder wher yourImage.jpg is
+in the folder wher yourImage.jpg is
+
+
+## Authors
+
+* **Simon Preisinger** - *code* - [SimonPreisinger](https://github.com/SimonPreisinger)
+* **Michael Krissgau** - *code* - [MichaelKrissgau](https://github.com/SimonPreisinger)
