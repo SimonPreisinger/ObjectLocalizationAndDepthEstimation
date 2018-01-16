@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-#CNN
-#Importing the Keras libraries and packages
-
-# Building the CNN
-# Importing the Keras libraries and packages
 from keras.models import Sequential
 from keras.layers import Convolution2D
 from keras.layers import MaxPooling2D
@@ -23,81 +17,61 @@ import numpy as np
 import tensorflow as tf
 from matplotlib import pyplot as plt
 from PIL import Image
-
-
-
 from keras.preprocessing.image import ImageDataGenerator, img_to_array, load_img 
-#import pydot
 from keras.utils.vis_utils import model_to_dot
-
 from time import time
 import keras
-
-
 
 from keras import backend as K
 K.clear_session()
 
-
 # Initialising the CNN
 classifier = Sequential();
-# first layer: Step 1 - Convolution # Step 2 - Pooling
+# first convolutional layer
 input_size = (128, 128)
 classifier.add(Convolution2D(32, (3, 3), input_shape=(*input_size, 3), activation='relu'))
-#classifier.add(Convolution2D(32, (3, 3), input_shape = (128, 128, 3), activation = 'relu')) #64x64 pixel size (increase using GPU), 3 for colord Image
 classifier.add(MaxPooling2D(pool_size = (2, 2)))
-###########################################################
-# Adding a second convolutional layer
-classifier.add(Convolution2D(32, (3, 3), activation = 'relu')) #Tut Step10 Verbesserung, 2. Layer
+# second convolutional layer
+classifier.add(Convolution2D(32, (3, 3), activation = 'relu'))
 classifier.add(MaxPooling2D(pool_size = (2, 2)))
-###########################################################
-# Adding a third convolutional layer
-classifier.add(Convolution2D(64, (3, 3), activation = 'relu')) #Tut Step10 Verbesserung, 3. Layer
+# third convolutional layer
+classifier.add(Convolution2D(64, (3, 3), activation = 'relu'))
 classifier.add(MaxPooling2D(pool_size = (2, 2)))
-# Step 3 - Flattening
-#classifier.add(Flatten(input_shape=train_data.shape[1:]))
+# Flattening
 classifier.add(Flatten())
-
-# Step 4 - Full connection
-#classifier.add(Dense(output_dim = 128, activation = 'relu')) # Zahl nicht zu klein dass es ein gutes Model ist und nicht zu groß, sonst zu rechenaufwändig
-#classifier.add(Dropout(0.5))
-#classifier.add(Dense(output_dim = 1, activation = 'sigmoid')) #sigmoid für binary werte bei mehr Werten softmax verwenden!
-# Step 4 - Multi-Class Classification
+# Multi-Class Classification
 classifier.add(Dense(64))
 classifier.add(Activation('relu'))
 classifier.add(Dropout(0.5))
 classifier.add(Dense(3))
 classifier.add(Activation('softmax'))
-#Compiling the CNN
-classifier.compile(optimizer = 'rmsprop', loss = 'categorical_crossentropy', metrics =['accuracy'] ) # more than two(cats dogs birds)  loss = crossentropy!
-                            #'adam'
+# Compiling
+classifier.compile(optimizer = 'rmsprop', loss = 'categorical_crossentropy', metrics =['accuracy'] )
                             
 # Fitting the CNN to the images
-# https://keras.io/preprocessing/image/
 from keras.preprocessing.image import ImageDataGenerator
 train_datagen = ImageDataGenerator(
         rescale=1./255,
         shear_range=0.2,
         zoom_range=0.2,
         horizontal_flip=True)
-####Train Data
+# Train Data
 test_datagen = ImageDataGenerator(rescale=1./255)
 batch_size=32
 training_set = train_datagen.flow_from_directory(
         'dataset/training_set',
-        target_size=input_size, #has to be input pixel size
+        target_size=input_size,
         batch_size=batch_size,
-        class_mode='categorical') # more than two: use ...
-nb_train_samples = len(training_set.filenames)  #number training images
-num_classes = len(training_set.class_indices)  #number classes
-#predict_size_train = int(math.ceil(nb_train_samples / batch_size)) 
+        class_mode='categorical')
+nb_train_samples = len(training_set.filenames)
+num_classes = len(training_set.class_indices)
 # labels to categorical [0,0,1]..
 train_labels = training_set.classes 
 train_labels = to_categorical(train_labels, num_classes=num_classes) 
-# save the class indices to use use later in predictions
+# save the class indices
 np.save('class_indices.npy', training_set.class_indices)
 
-### Test Data
+# Test Data
 test_set = test_datagen.flow_from_directory(
         'dataset/test_set',
         target_size=input_size,
@@ -110,49 +84,33 @@ test_labels = test_set.classes
 test_labels = to_categorical(test_labels, num_classes=num_classes) 
 
 # Start Tensorboard:
-# C:\Users\Simon\Documents\DeepLearning\deepLearning>tensorboard --logdir=logs/
 tensorBoard = TensorBoard(log_dir="logs/{}".format(time()), write_graph=True, write_images=True)
-# tensorBoard = TensorBoard(log_dir='./logs2', histogram_freq=0, batch_size=32, write_graph=True, write_grads=False, write_images=False, embeddings_freq=0, embeddings_layer_names=None, embeddings_metadata=None)
 
 #from keras.models import load_model
-#### LOAD
+# LOAD MODEL
 #classifier = load_model('savedModels/classifierEpoch50.h5')
-####
-
-# evtl add EarlyStopping keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=0, verbose=0, mode='auto')
+#
 classifier.fit_generator(
         training_set,
         callbacks=[tensorBoard],
-        steps_per_epoch=80/32, # number of images in training set
+        steps_per_epoch=80/32,
         epochs=20,
         validation_data=test_set,
-        validation_steps=20/32) # images in test_set
-
-#val_acc = Testsetaccuracy
-# to be better: increase imgaesize 128x128 instead 64x64....
-#ap = argparse.ArgumentParser()
-#args = vars(ap.parse_args())
-
+        validation_steps=20/32)
+# SAVE MODEL
 #classifier.save('savedModels/classifierEpoch90Layer3Dropout128X128.h5')  # creates a HDF5 file 'my_model.h5'
 #classifier.save(args["model"])
-# del classifier  # deletes the existing model
 
-#SVG(model_to_dot(classifier).create(prog='dot', format='svg'))
-#Part 3 - Make a Prediction
+# Prediction
 IMAGE_PATH = 'dataset/single_prediction/image_1.jpg' 
   
 orig = cv2.imread(IMAGE_PATH) 
-  
-#print("[INFO] loading and preprocessing image...") 
 image = load_img(IMAGE_PATH, target_size=(128, 128))   #224 224
 image = img_to_array(image) 
-  
-# important! otherwise the predictions will be '0' 
 image = image / 255 
   
 image = np.expand_dims(image, axis=0) 
 result = classifier.predict(image)
-#inputarray = image[np.newaxis,...]
 prediction = classifier.predict_proba(image)
 # Label
 pCat = prediction[0,0]*100
@@ -170,50 +128,28 @@ elif pPlane > pDog and pPlane > pCat:
 pLabel = "%.2f" % pLabel    
 pLabel = str(pLabel)
 
-#finalResult = label + pLabel
-    
-    
-#inID = prediction[0]  
-#class_dictionary = training_set.class_indices 
-#inv_map = {v: k for k, v in class_dictionary.items()} 
-#label = inv_map[inID] 
+# finalResult = label + pLabel
 imageLabel = label+" ("+pLabel+"%)"
-#print("Image ID: {}, Label: {}".format(inID, label)) 
 cv2.putText(orig, "{}".format(imageLabel), (10, 30), cv2.FONT_HERSHEY_PLAIN, 1.5, (43, 99, 255), 2) 
 cv2.imshow("Classification", orig) 
 cv2.waitKey(0) 
-cv2.destroyAllWindows() 
-
-# Part 3 - Making new predictions
-#import numpy as np
-#from keras.preprocessing import image
-#
-##test image
-#test_image = image.load_img('dataset/single_prediction/cat_or_dog_3_depth.jpg', target_size = (128,128))
-#test_image = image.img_to_array(test_image) # Bild zu Bild mit 3 Farbkanälen umwandeln
-#test_image = np.expand_dims(test_image, axis = 0)
-##Ergebnis:
-#result = classifier.predict(test_image)
-#training_set.class_indices #welcher Wert passt zu welchem Label(z.B. cat = 0,dog = 1)
-#
-#if result[1][0] == 1:
-#
-#    prediction = 'dog'
-#
-#else:
-#
-#    prediction = 'cat'
-
-#PREDICTION IN ORIGINAL IMAGE COPY
-#load model
-    
+cv2.destroyAllWindows()    
 
 
+
+
+
+
+
+
+
+
+
+
+
+#################### FRCN DEPTH ###############################################
 from keras import backend as K
 K.clear_session()
-
-
-##################### FRCN
 import argparse
 import os
 import numpy as np
@@ -293,9 +229,17 @@ def predict(model_data_path, IMAGE_PATH):
 predict(model_data_path, IMAGE_PATH)     
 
 
-########################################################################################
-## OBJECT LOCALIZATION SSD_MBILENET
 
+
+
+
+
+
+
+
+######################## OBJECT LOCALIZATION SSD_MBILENET######################
+from keras import backend as K
+K.clear_session()
 import numpy as np
 import os
 import six.moves.urllib as urllib
@@ -304,16 +248,13 @@ import tarfile
 import tensorflow as tf
 import zipfile
 import matplotlib
-
 from collections import defaultdict
 from io import StringIO
 from matplotlib import pyplot as plt
 from PIL import Image
-
-
 import label_map_util
-
 import visualization_utils as vis_util
+from keras.preprocessing.image import ImageDataGenerator, img_to_array, load_img 
 
 # What model to download.
 MODEL_NAME = 'ssd_mobilenet_v1_coco_11_06_2017'
@@ -328,7 +269,7 @@ PATH_TO_LABELS = ("C:\ObjectLocalizationAndDepthEstimation\object_recognition_de
 
 NUM_CLASSES = 90
 
-# ## Download Model
+### Download Model
 
 if not os.path.exists(MODEL_NAME + '/frozen_inference_graph.pb'):
 	print ('Downloading the model')
@@ -343,9 +284,7 @@ if not os.path.exists(MODEL_NAME + '/frozen_inference_graph.pb'):
 else:
 	print ('Model already exists')
 
-
 # ## Load a (frozen) Tensorflow model into memory.
-
 detection_graph = tf.Graph()
 with detection_graph.as_default():
   od_graph_def = tf.GraphDef()
@@ -356,7 +295,6 @@ with detection_graph.as_default():
 
 
 # ## Loading label map
-# Label maps map indices to category names, so that when our convolution network predicts `5`, we know that this corresponds to `airplane`.  Here we use internal utility functions, but anything that returns a dictionary mapping integers to appropriate string labels would be fine
 
 label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
 categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
@@ -369,14 +307,10 @@ def load_image_into_numpy_array(image):
   return np.array(image.getdata()).reshape(
       (im_height, im_width, 3)).astype(np.uint8)
 
-
+##################### Change Range for more than one picture
 # # Detection
-# For the sake of simplicity we will use only 2 images:
-# image1.jpg
-# image2.jpg
-# If you want to test the code with your images, just add path to the images to the TEST_IMAGE_PATHS.
 PATH_TO_TEST_IMAGES_DIR = 'test_images'
-TEST_IMAGE_PATHS = [ os.path.join('\dataset\single_prediction', 'image_{}.jpg'.format(i)) for i in range(1, 4) ]
+TEST_IMAGE_PATHS = [ os.path.join('C:\ObjectLocalizationAndDepthEstimation\dataset\single_prediction', 'image_{}.jpg'.format(i)) for i in range(1, 2) ]
 # Size, in inches, of the output images.
 IMAGE_SIZE = (12, 8)
 
@@ -413,9 +347,6 @@ with detection_graph.as_default():
           use_normalized_coordinates=True,
           line_thickness=8)
       plt.figure(figsize=IMAGE_SIZE)
-
-     # plt.imshow(image_np)
-      #plt.axis("off")
       
       fig = plt.imshow(image_np)
 
@@ -429,13 +360,16 @@ with detection_graph.as_default():
 
       plt.savefig(image_path_withoutEnd+ "_box.jpg",bbox_inches = 'tight')
 
-######################################################################################################################
 
+
+
+
+
+
+
+################# Object Classivication Resnet50 ###################################
 from keras import backend as K
 K.clear_session()
-
-
-############################################################### Object Detection Resnet50
 from matplotlib import pyplot as detectPlt
 from PIL import Image    
 import keras as detectKeras
@@ -459,7 +393,7 @@ preds = resnet.predict(x)
 print('Predicted:', decode_predictions(preds))
 name =  decode_predictions(preds)
 
-######################## Label Image
+# Label Image
 showName = (name[0][0][1], name[0][0][2])
 orig = cv2.imread(IMAGE_PATH_withoutEnd + "_box.jpg") 
 cv2.putText(orig, "{}".format(showName), (10, 30), cv2.FONT_HERSHEY_PLAIN, 1.5, (43, 99, 255), 2) 

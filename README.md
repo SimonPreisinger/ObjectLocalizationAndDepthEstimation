@@ -6,14 +6,14 @@ This project creates an output image that combines a depth estimation with a obj
 
 ### Quick Start:
 
-* download http://campar.in.tum.de/files/rupprecht/depthpred/NYU_ResNet-UpProj.npy and save it in the source directory.
+* clone repository to C
+* download http://campar.in.tum.de/files/rupprecht/depthpred/NYU_FCRN-checkpoint.zip and extract it in the source directory.
 * save your image in \dataset\single_prediction\image_1
 * change image pathes in cnn.py
 * start cnn.py
-* mark and run code line 200 - 300 (depth prediction of the image)
-* mark and run code line 299 - 430 (tensorflow object api, will be downloaded if not available)
-* mark and run codee line 431 - end (combines depth image with detection image)
-
+* mark and run code line 150 - 230 (depth prediction of the image)
+* mark and run code line 240 - 361 (tensorflow object api, will be downloaded if not available)
+* mark and run codee line 370 - end (combines depth image with detection image)
 
 ## Object Classification: 
 For object classification it uses the resnet50 from keras which will automatically be downloaded by starting the python cnn file
@@ -35,4 +35,4 @@ in the folder where yourImage.jpg is
 ## Authors
 
 * **Simon Preisinger** - *code* - [SimonPreisinger](https://github.com/SimonPreisinger)
-* **Michael Krissgau** - *code* - [MichaelKrissgau](https://github.com/SimonPreisinger)
+* **Michael Krissgau** - *code*
