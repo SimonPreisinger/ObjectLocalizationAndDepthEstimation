@@ -28,7 +28,9 @@ github page (https://github.com/tensorflow/models/tree/master/research/object_de
 					 a combined image  yourImage_combined.jpg
 					 
 in the folder where yourImage.jpg is
-
+## Examples
+![Alt text](/image_1_combined.jpg?raw=true "Dog")
+![Alt text](/image_2_combined.jpg?raw=true "Cat")
 
 ## Authors
 
