@@ -11,9 +11,7 @@ This project creates an output image that combines a depth estimation with a obj
 * save your image in \dataset\single_prediction\image_1
 * change image pathes in cnn.py
 * start cnn.py
-* mark and run code line 150 - 230 (depth prediction of the image)
-* mark and run code line 240 - 361 (tensorflow object api, will be downloaded if not available)
-* mark and run codee line 370 - end (combines depth image with detection image)
+* mark and run code
 
 ## Object Classification: 
 For object classification it uses the resnet50 from keras which will automatically be downloaded by starting the python cnn file
