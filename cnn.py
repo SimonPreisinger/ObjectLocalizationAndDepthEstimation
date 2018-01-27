@@ -22,128 +22,6 @@ from keras.utils.vis_utils import model_to_dot
 from time import time
 import keras
 
-from keras import backend as K
-K.clear_session()
-
-# Initialising the CNN
-classifier = Sequential();
-# first convolutional layer
-input_size = (128, 128)
-classifier.add(Convolution2D(32, (3, 3), input_shape=(*input_size, 3), activation='relu'))
-classifier.add(MaxPooling2D(pool_size = (2, 2)))
-# second convolutional layer
-classifier.add(Convolution2D(32, (3, 3), activation = 'relu'))
-classifier.add(MaxPooling2D(pool_size = (2, 2)))
-# third convolutional layer
-classifier.add(Convolution2D(64, (3, 3), activation = 'relu'))
-classifier.add(MaxPooling2D(pool_size = (2, 2)))
-# Flattening
-classifier.add(Flatten())
-# Multi-Class Classification
-classifier.add(Dense(64))
-classifier.add(Activation('relu'))
-classifier.add(Dropout(0.5))
-classifier.add(Dense(3))
-classifier.add(Activation('softmax'))
-# Compiling
-classifier.compile(optimizer = 'rmsprop', loss = 'categorical_crossentropy', metrics =['accuracy'] )
-                            
-# Fitting the CNN to the images
-from keras.preprocessing.image import ImageDataGenerator
-train_datagen = ImageDataGenerator(
-        rescale=1./255,
-        shear_range=0.2,
-        zoom_range=0.2,
-        horizontal_flip=True)
-# Train Data
-test_datagen = ImageDataGenerator(rescale=1./255)
-batch_size=32
-training_set = train_datagen.flow_from_directory(
-        'dataset/training_set',
-        target_size=input_size,
-        batch_size=batch_size,
-        class_mode='categorical')
-nb_train_samples = len(training_set.filenames)
-num_classes = len(training_set.class_indices)
-# labels to categorical [0,0,1]..
-train_labels = training_set.classes 
-train_labels = to_categorical(train_labels, num_classes=num_classes) 
-# save the class indices
-np.save('class_indices.npy', training_set.class_indices)
-
-# Test Data
-test_set = test_datagen.flow_from_directory(
-        'dataset/test_set',
-        target_size=input_size,
-        batch_size=batch_size,
-        class_mode='categorical')
-nb_validation_samples = len(test_set.filenames) 
-num_classes = len(test_set.class_indices) 
-# labels to categorical [0,0,1]..
-test_labels = test_set.classes 
-test_labels = to_categorical(test_labels, num_classes=num_classes) 
-
-# Start Tensorboard:
-tensorBoard = TensorBoard(log_dir="logs/{}".format(time()), write_graph=True, write_images=True)
-
-#from keras.models import load_model
-# LOAD MODEL
-#classifier = load_model('savedModels/classifierEpoch50.h5')
-#
-classifier.fit_generator(
-        training_set,
-        callbacks=[tensorBoard],
-        steps_per_epoch=80/32,
-        epochs=20,
-        validation_data=test_set,
-        validation_steps=20/32)
-# SAVE MODEL
-#classifier.save('savedModels/classifierEpoch90Layer3Dropout128X128.h5')  # creates a HDF5 file 'my_model.h5'
-#classifier.save(args["model"])
-
-# Prediction
-IMAGE_PATH = 'dataset/single_prediction/image_1.jpg' 
-  
-orig = cv2.imread(IMAGE_PATH) 
-image = load_img(IMAGE_PATH, target_size=(128, 128))   #224 224
-image = img_to_array(image) 
-image = image / 255 
-  
-image = np.expand_dims(image, axis=0) 
-result = classifier.predict(image)
-prediction = classifier.predict_proba(image)
-# Label
-pCat = prediction[0,0]*100
-pDog = prediction[0,1]*100
-pPlane = prediction[0,2]*100
-if pCat > pDog and pCat > pPlane:
-    label = "Cat"
-    pLabel = pCat
-elif pDog > pCat and pDog > pPlane:
-    label = "Dog"
-    pLabel = pDog
-elif pPlane > pDog and pPlane > pCat:
-    label = "Plane"
-    pLabel = pPlane
-pLabel = "%.2f" % pLabel    
-pLabel = str(pLabel)
-
-# finalResult = label + pLabel
-imageLabel = label+" ("+pLabel+"%)"
-cv2.putText(orig, "{}".format(imageLabel), (10, 30), cv2.FONT_HERSHEY_PLAIN, 1.5, (43, 99, 255), 2) 
-cv2.imshow("Classification", orig) 
-cv2.waitKey(0) 
-cv2.destroyAllWindows()    
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -237,7 +115,7 @@ predict(model_data_path, IMAGE_PATH)
 
 
 
-######################## OBJECT LOCALIZATION SSD_MBILENET######################
+######################## OBJECT LOCALIZATION SSD_MOBILENET######################
 from keras import backend as K
 K.clear_session()
 import numpy as np
@@ -367,7 +245,7 @@ with detection_graph.as_default():
 
 
 
-################# Object Classivication Resnet50 ###################################
+################# Object ClassiFication Resnet50 ###################################
 from keras import backend as K
 K.clear_session()
 from matplotlib import pyplot as detectPlt
